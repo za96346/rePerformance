@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Suspense, lazy } from 'react'
 import {
     BrowserRouter as Router,
     Routes,
@@ -7,15 +7,20 @@ import {
 } from 'react-router-dom'
 import Layout from './share/Layout'
 
+const Auth = lazy((): any => import('./page/Auth/Index'))
+
 const App = (): JSX.Element => {
     return (
-        <Router>
-            <Routes>
-                <Route path='/' element={<Layout />}>
-                    <Route path='/' element={<Navigate to={'/'} />}/>
-                </Route>
-            </Routes>
-        </Router>
+        <Suspense fallback={'loading...'}>
+            <Router>
+                <Routes>
+                    <Route path='/' element={<Layout />}>
+                        <Route path='/' element={<Navigate to={'auth'} />}/>
+                        <Route path='auth' element={<Auth />}></Route>
+                    </Route>
+                </Routes>
+            </Router>
+        </Suspense>
     )
 }
 
