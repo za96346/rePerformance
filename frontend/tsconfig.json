@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "outDir": "./build",
+    "rootDir": "src",
+    "jsx": "preserve",
+    "lib": ["dom", "es5", "es6", "es2021"],
+  },
+  "include": ["src/**/*",  "./src/index.d.ts"],
+  "exclude": ["node_modules"]
+}
