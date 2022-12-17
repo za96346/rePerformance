@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # backend
-./backend/build
+backend/build

@@ -15,12 +15,9 @@
     "parserOptions": {
         "ecmaVersion": "latest",
         "sourceType": "module",
-        "project": "./tsconfig.eslint.json",
+        "project": "./src/*",
         "tsconfigRootDir": ""
     },
-    "plugins": [
-        "react"
-    ],
     "rules": {
         "indent": "off",
         "quotes": "off",

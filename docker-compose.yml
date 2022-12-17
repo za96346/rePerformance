@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  dajia_frontend:
+    container_name: performance_frontend
+    image: nginx:1.3
+    ports:
+      - "80:80"
+    restart: always
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    build: ./frontend/build/
+    networks:
+      perbackendNet:
+        ipv4_address: 172.20.0.6
+    # build: 
+    #   context: ./frontend/build/Dockerfile #原路徑
+    #   dockerfile: ./frontend/build/Dockerfile #備用路徑
+
+  dajia_gunicorn:
+    container_name: performance_backend
+    # ports:
+    #   - "5001:5001"
+    expose:
+      - 5001
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    build: ./backend/
+    
+    command: >
+      bash -c "gunicorn --config gunicorn.conf.py backend:app"
+    networks:
+      # - perfrontendNet
+      perbackendNet:
+        ipv4_address: 172.20.0.5
+
+  dajia_socket:
+    container_name: performance_socket
+    ports:
+      - "5002:5002"
+    # expose:
+    #   - 5002
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    build: .
+    command: >
+      bash -c "python socketIo.py"
+    networks:
+      perbackendNet:
+        ipv4_address: 172.20.0.4
+
+  dajia_redis:
+    image: redis
+    container_name: dajia_redis
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    volumes:
+      - ./volume/redis:/data
+    expose:
+      - 6379
+    # command: >
+    #   bash -c "redis-server --daemonize yes"
+    networks:
+      perbackendNet:
+        ipv4_address: 172.20.0.3
+
+
+
+  # dajia_backend_supervisor:
+  #   container_name: performance_backendSupervisor
+  #   ports:
+  #     - "5001:5001"
+  #     - "5002:5002"
+  #   build: ./supervisor/
+  #   stdin_open: true # docker run -i
+  #   tty: true        # docker run -t
+  #   networks:
+  #     # perfrontendNet:
+  #     perbackendNet:
+  #       ipv4_address: 172.20.0.3
+    
+  dajia_mysql:
+    image: mysql:8
+    container_name: dajia_mysql
+    volumes:
+      - ./volume/mysql:/var/lib/mysql
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    environment:
+      MYSQL_ROOT_PASSWORD: siou0722
+      #  MYSQL_USER: wordpress
+      #  MYSQL_PASSWORD: wordpress
+      MYSQL_DATABASE: dajia
+      expose: 3306
+    # ports:
+    #   - "3306:3306"
+    networks:
+      perbackendNet:
+        ipv4_address: 172.20.0.2
+
+
+
+networks:
+  perfrontendNet:
+    name: perfrontend
+  perbackendNet:
+    name: perbackend
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+
